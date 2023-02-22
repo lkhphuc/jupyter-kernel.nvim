@@ -1,4 +1,3 @@
--- local cmp = require("cmp")
 local source = {}
 
 source.new = function()
@@ -9,10 +8,7 @@ end
 ---Return whether this source is available in the current context or not (optional).
 ---@return boolean
 function source:is_available()
-	return true
-	-- local is_loaded = package.loaded["nvim-send-to-term"]
-	-- local can_complete = vim.fn["SendCanComplete"]()
-	-- return is_loaded and can_complete
+	return vim.b.jupyter_attached
 end
 
 function source:get_debug_name()
@@ -24,7 +20,6 @@ end
 ---@param callback fun(response: lsp.CompletionResponse|nil)
 function source:complete(params, callback)
 	local items = vim.fn["JupyterComplete"]()
-	vim.pretty_print(items)
 	callback(items)
 end
 
