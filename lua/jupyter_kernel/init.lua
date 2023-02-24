@@ -18,7 +18,7 @@ function M.inspect()
 		vim.notify("No jupyter kernel attached")
 		return
 	end
-	local inspect = vim.fn.JupyterInspect()
+	local inspect = vim.fn.JupyterInspect(vim.g.jupyter_timeout)
 	local out = ""
 
 	if inspect.status ~= "ok" then
@@ -27,22 +27,35 @@ function M.inspect()
 		out = "No information from kernel"
 	elseif inspect.found == true then
 		-- Strip ANSI Escape code: https://stackoverflow.com/a/55324681
+		-- The above regexes do the following:
+		-- 1. \x1b is the escape character
+		-- 2. %[%d+; is the ANSI escape code for a digit color
+		-- and so on
 		out = inspect.data["text/plain"]
 			:gsub("\x1b%[%d+;%d+;%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+m", "")
 			:gsub("\x1b%[%d+m", "")
-		-- out = string.gsub(inspect.data["text/plain"], "[\\27\\155][][()#;?%d]*[A-PRZcf-ntqry=><~]", "")
+		-- The following regex convert ansi code for tab
+		-- out = out:gsub("\x1b%[H", "\t")
 	end
 
 	local lines = {}
-	for line in vim.gsplit(out, "\\n") do
-		vim.pretty_print(line)
+	for line in vim.gsplit(out, [[\n]]) do
 		table.insert(lines, line)
 	end
 
 	vim.lsp.util.open_floating_preview(lines, "markdown", { max_width = 80 })
+end
+
+local defaults = {
+	timeout = 0.5,
+}
+
+function M.setup(opts)
+	opts = vim.tbl_deep_extend("force", defaults, opts or {})
+	vim.g.jupyter_timeout = opts.timeout
 end
 
 return M

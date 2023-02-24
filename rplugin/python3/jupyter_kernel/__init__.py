@@ -4,8 +4,6 @@ import pynvim
 from jupyter_client import BlockingKernelClient
 from jupyter_core.paths import jupyter_runtime_dir
 
-timeout = 0.5
-
 CompletionItemKind = {
     "text": 1,
     "method": 2,
@@ -81,6 +79,7 @@ class JupyterKernel(object):
 
   @pynvim.function('JupyterComplete', sync=True)
   def complete(self, args):
+    timeout = args[0]
     assert self.client is not None, "No jupyter kernel attached"
     try:
       line_content = self.vim.current.line
@@ -117,6 +116,7 @@ class JupyterKernel(object):
 
   @pynvim.function("JupyterInspect", sync=True)
   def inspect(self, args):
+    timeout = args[0]
     try:
       line_content = self.vim.current.line
       row, col = self.vim.current.window.cursor

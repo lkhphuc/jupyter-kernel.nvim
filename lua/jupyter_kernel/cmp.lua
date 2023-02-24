@@ -19,7 +19,7 @@ end
 ---@param params cmp.SourceCompletionApiParams
 ---@param callback fun(response: lsp.CompletionResponse|nil)
 function source:complete(params, callback)
-	local items = vim.fn["JupyterComplete"]()
+	local items = vim.fn.JupyterComplete(vim.g.jupyter_timeout)
 	callback(items)
 end
 
