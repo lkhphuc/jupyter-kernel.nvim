@@ -18,7 +18,7 @@ function M.inspect()
 		vim.notify("No jupyter kernel attached")
 		return
 	end
-	local inspect = vim.fn.JupyterInspect(vim.g.jupyter_timeout)
+	local inspect = vim.fn.JupyterInspect(M.opts.timeout)
 	local out = ""
 
 	if inspect.status ~= "ok" then
@@ -46,16 +46,22 @@ function M.inspect()
 		table.insert(lines, line)
 	end
 
-	vim.lsp.util.open_floating_preview(lines, "markdown", { max_width = 80 })
+	vim.lsp.util.open_floating_preview(lines, "markdown", M.opts.inspect.window)
 end
 
-local defaults = {
+local default_config = {
+	inspect = {
+		-- opts for vim.lsp.util.open_floating_preview
+		window = {
+			max_width = 84,
+		},
+	},
+	-- time to wait for kernel's response in seconds
 	timeout = 0.5,
 }
 
 function M.setup(opts)
-	opts = vim.tbl_deep_extend("force", defaults, opts or {})
-	vim.g.jupyter_timeout = opts.timeout
+	M.opts = vim.tbl_deep_extend("force", default_config, opts or {})
 end
 
 return M

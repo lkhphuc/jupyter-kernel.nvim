@@ -36,10 +36,18 @@ For controlling or sending code to kernel from Neovim, uses your favorite Neovim
 { 
   "jupyter-kernel.nvim", 
   opts = {
-    timeout = 0.5, -- time to wait for response from kernel
-  },
+    inspect = {
+      -- opts for vim.lsp.util.open_floating_preview
+      window = {
+        max_width = 84,
+      },
+    },
+    -- time to wait for kernel's response in seconds
+    timeout = 0.5,
+  }
   cmd = "JupyterAttach",
   build = ":UpdateRemotePlugins",
+  keys = { { "<leader>k", "<Cmd>JupyterInspect<CR>", desc = "Inspect object in kernel" } },
 }
 ```
 
