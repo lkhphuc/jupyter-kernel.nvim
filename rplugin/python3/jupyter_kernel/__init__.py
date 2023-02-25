@@ -128,7 +128,7 @@ class JupyterKernel(object):
           detail_level=0,
           reply=True,  # type:ignore
           timeout=timeout)  # type:ignore
-      self.vim.out_write("Jupyter kernel inspect reply: {}\n".format(
+      # self.vim.out_write("Jupyter kernel inspect reply: {}\n".format(
           reply['content']))
       return reply['content']
     except TimeoutError:
