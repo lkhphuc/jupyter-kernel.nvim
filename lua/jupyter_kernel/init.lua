@@ -43,6 +43,7 @@ function M.inspect()
 
 	local lines = {}
 	for line in vim.gsplit(out, [[\n]]) do
+		line = line:gsub([[\n]], "")
 		table.insert(lines, line)
 	end
 
