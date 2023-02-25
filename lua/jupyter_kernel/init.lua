@@ -42,8 +42,7 @@ function M.inspect()
 	end
 
 	local lines = {}
-	for line in vim.gsplit(out, [[\n]]) do
-		line = line:gsub([[\n]], "")
+	for line in vim.gsplit(out, "\n") do
 		table.insert(lines, line)
 	end
 
@@ -63,6 +62,7 @@ local default_config = {
 
 function M.setup(opts)
 	M.opts = vim.tbl_deep_extend("force", default_config, opts or {})
+	vim.g.__jupyter_timeout = M.opts.timeout
 end
 
 return M
