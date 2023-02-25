@@ -32,7 +32,7 @@ CompletionItemKind = {
     "typeParameter": 25,
     # Jupyter specific
     "dict key": 14,
-    "instance": 6,  # NOTE: not sure what this means
+    "instance": 6,
     "magic": 23,
     "path": 19,
     "statement": 13
@@ -41,9 +41,6 @@ CompletionItemKind = {
 
 @pynvim.plugin
 class JupyterKernel(object):
-
-  def __call__(self):
-    return
 
   def __init__(self, vim):
     self.vim: pynvim.Nvim = vim
@@ -88,6 +85,7 @@ class JupyterKernel(object):
                                    col,
                                    reply=True,
                                    timeout=timeout)['content']
+      return self._parse_completion_reply(reply)
     except TimeoutError:
       self.vim.out_write("Jupyter kernel completion timeout\n")
       return {}
@@ -95,20 +93,24 @@ class JupyterKernel(object):
       self.vim.out_write("Jupyter kernel's exception: {}\n".format(e))
       return {}
 
-    if ('metadata' in reply.keys()
-        and '_jupyter_types_experimental' in reply['metadata'].keys()):
-      matches = []
+  def _parse_completion_reply(self, reply):
+    # self.vim.out_write("Jupyter kernel completion reply: {}\n".format(reply))
+    has_experimental_types = ("metadata" in reply.keys()
+                              and '_jupyter_types_experimental'
+                              in reply['metadata'].keys())
+    # if False:  #  debug
+    if has_experimental_types:
       replies = reply['metadata']['_jupyter_types_experimental']
       matches = [
           {
-              "label": m['text'],
+              "label": match['text'],
               "documentation": {
                   "kind": "markdown",
-                  "value": f"```python\n{m['signature']}\n```"
+                  "value": f"```python\n{match['signature']}\n```"
               },
               # default kind: text = 1
-              "kind": CompletionItemKind.get(m["type"], 1)
-          } for m in replies
+              "kind": CompletionItemKind.get(match["type"], 1)
+          } for match in replies
       ]
       return matches
     else:
@@ -126,6 +128,8 @@ class JupyterKernel(object):
           detail_level=0,
           reply=True,  # type:ignore
           timeout=timeout)  # type:ignore
+      self.vim.out_write("Jupyter kernel inspect reply: {}\n".format(
+          reply['content']))
       return reply['content']
     except TimeoutError:
       return {'status': "Kernel timeout"}
