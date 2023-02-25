@@ -78,6 +78,17 @@ A popup will appear and list all the available kernels to connect to, sorted by 
 - Completions are provided automatically by `nvim-cmp`, given you have it setup.
 - Call `JupyterInspect` to inspect word under cursor.
 
+
+# References
+Only the following commands are provided, without any default keymaps.
+- `JupyterAttach`: select a running kernel to attach
+- `JupyterDetach`: detach buffer from kernel
+- `JupyterInspect`: inspect object under cursor. This command send the current line and cursor location to `jupyter_client`, it is up to the kernel to decide which object to inspect.
+
+```lua
+vim.keymap.set("n", "<leader>k", "<CMD>JupyterInspect<CR>", {desc = "Inspect object"})
+```
+
 # FAQ
 
 #### I don't see any kernel for my IPython console

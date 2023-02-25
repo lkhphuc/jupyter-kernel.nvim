@@ -13,5 +13,3 @@ vim.api.nvim_create_user_command(
 	require("jupyter_kernel").inspect,
 	{ desc = "Inpsect object in the kernel" }
 )
-
-vim.keymap.set("n", "<leader>k", "<Cmd>JupyterInspect<CR>")
