@@ -1,16 +1,24 @@
 local M = {}
 
-function M.attach()
-	local _ = vim.fn.JupyterKernels() -- not sure why but 1st called always return nil
-	local kernels = vim.fn.JupyterKernels()
-	vim.ui.select(kernels, { prompt = "Select a kernel" }, function(kernel)
-		if kernel == nil then
-			return
-		end
-		vim.fn.JupyterAttach(kernel)
-		vim.b.jupyter_attached = true
-		vim.notify("Jupyter kernel attached")
-	end)
+local function _attach(kernel)
+	vim.fn.JupyterAttach(kernel)
+	vim.b.jupyter_attached = true
+	vim.notify("Attach to " .. kernel)
+end
+
+function M.attach(opts)
+	local kernel = opts.args -- User supplied full path
+	if kernel ~= "" then -- User didn't supply full path
+		_attach(kernel)
+	else
+		vim.fn.JupyterKernels() -- not sure why but 1st called always return nil
+		local kernels = vim.fn.JupyterKernels(kernel)
+		kernel = vim.ui.select(kernels, { prompt = "Select a kernel" }, function(kernel)
+			if kernel ~= nil then
+				_attach(kernel)
+			end
+		end)
+	end
 end
 
 function M.inspect()
