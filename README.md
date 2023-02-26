@@ -89,7 +89,7 @@ A popup will appear and list all the available kernels to connect to, sorted by 
 
 # References
 Only the following commands are provided, without any default keymaps.
-- `JupyterAttach`: select a running kernel to attach
+- `JupyterAttach`: 1st argument is path to kernel's json. If no path is provided, a popup will appear to select a running kernel to attach.
 - `JupyterDetach`: detach buffer from kernel
 - `JupyterInspect`: inspect object under cursor. This command send the current line and cursor location to `jupyter_client`, it is up to the kernel to decide which object to inspect.
 
