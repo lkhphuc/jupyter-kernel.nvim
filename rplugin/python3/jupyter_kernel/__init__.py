@@ -103,13 +103,13 @@ class JupyterKernel(object):
       replies = reply['metadata']['_jupyter_types_experimental']
       matches = [
           {
-              "label": match['text'],
+              "label": match.get("text", ""),
               "documentation": {
                   "kind": "markdown",
-                  "value": f"```python\n{match['signature']}\n```"
+                  "value": f"```python\n{match.get('signature', '')}\n```"
               },
               # default kind: text = 1
-              "kind": CompletionItemKind.get(match["type"], 1)
+              "kind": CompletionItemKind[match.get("type", "text")]
           } for match in replies
       ]
       return matches
