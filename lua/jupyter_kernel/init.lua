@@ -31,9 +31,9 @@ function M.inspect()
 
 	if inspect.status ~= "ok" then
 		out = inspect.status
-	elseif inspect.found == false then
-		out = "No information from kernel"
-	elseif inspect.found == true then
+	elseif inspect.found ~= true then
+		out = "_No information from kernel_"
+	else
 		-- Strip ANSI Escape code: https://stackoverflow.com/a/55324681
 		-- The above regexes do the following:
 		-- 1. \x1b is the escape character
@@ -62,6 +62,7 @@ local default_config = {
 		-- opts for vim.lsp.util.open_floating_preview
 		window = {
 			max_width = 84,
+			focus_id = "jupyter",
 		},
 	},
 	-- time to wait for kernel's response in seconds

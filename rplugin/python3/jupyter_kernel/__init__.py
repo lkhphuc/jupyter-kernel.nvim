@@ -40,11 +40,11 @@ CompletionItemKind = {
 
 
 @pynvim.plugin
-class JupyterKernel(object):
+class JupyterKernel:
 
   def __init__(self, vim):
     self.vim: pynvim.Nvim = vim
-    self.client = None
+    self.client: BlockingKernelClient | None = None
     self.kerneldir = Path(jupyter_runtime_dir())
 
   @pynvim.function("JupyterKernels", sync=True)
@@ -90,34 +90,31 @@ class JupyterKernel(object):
       self.vim.out_write("Jupyter kernel completion timeout\n")
       return {}
     except Exception as e:
-      self.vim.out_write("Jupyter kernel's exception: {}\n".format(e))
+      self.vim.out_write(f"Jupyter kernel's exception: {e}\n")
       return {}
 
   def _parse_completion_reply(self, reply):
     # self.vim.out_write("Jupyter kernel completion reply: {}\n".format(reply))
-    has_experimental_types = ("metadata" in reply.keys()
-                              and '_jupyter_types_experimental'
-                              in reply['metadata'].keys())
-    # if False:  #  debug
-    if has_experimental_types:
-      replies = reply['metadata']['_jupyter_types_experimental']
-      matches = [
-          {
-              "label": match.get("text", ""),
-              "documentation": {
-                  "kind": "markdown",
-                  "value": f"```python\n{match.get('signature', '')}\n```"
-              },
-              # default kind: text = 1
-              "kind": CompletionItemKind[match.get("type", "text")]
-          } for match in replies
-      ]
-      return matches
-    else:
+    has_experimental_types = "metadata" in reply and (
+        '_jupyter_types_experimental' in reply['metadata'])
+    if not has_experimental_types:
       return [{"label": m} for m in reply["matches"]]
+
+    return [
+        {
+            "label": match.get("text", ""),
+            "documentation": {
+                "kind": "markdown",
+                "value": f"```python\n{match.get('signature', '')}\n```"
+            },
+            # default kind: text = 1
+            "kind": CompletionItemKind[match.get("type", "text")]
+        } for match in reply['metadata']['_jupyter_types_experimental']
+    ]
 
   @pynvim.function("JupyterInspect", sync=True)
   def inspect(self, args):
+    assert self.client is not None, "No jupyter kernel attached"
     timeout = args[0]
     try:
       line_content = self.vim.current.line
