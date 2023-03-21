@@ -119,16 +119,13 @@ class JupyterKernel:
     try:
       line_content = self.vim.current.line
       row, col = self.vim.current.window.cursor
-      reply = self.client.inspect(
-          line_content,
-          col,
-          detail_level=0,
-          reply=True,  # type:ignore
-          timeout=timeout)  # type:ignore
-      # self.vim.out_write("Jupyter kernel inspect reply: {}\n".format(
-      #     reply['content']))
+      reply = self.client.inspect(line_content,
+                                  col,
+                                  detail_level=0,
+                                  reply=True,
+                                  timeout=timeout)
       return reply['content']
     except TimeoutError:
-      return {'status': "Kernel timeout"}
-    except Exception as e:
-      return {'status': str(e)}
+      return {'status': "_Kernel timeout_"}
+    except Exception as exception:
+      return {'status': f"_{str(exception)}_"}
