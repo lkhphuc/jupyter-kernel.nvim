@@ -23,9 +23,11 @@ end
 
 function M.inspect()
   if vim.b.jupyter_attached ~= true then
-    vim.notify("No jupyter kernel attached")
+    vim.notify("No jupyter kernel attached. Select kernel:")
+    M.attach({ args="" })
     return
   end
+
   local inspect = vim.fn.JupyterInspect(M.opts.timeout)
   local out = ""
 
@@ -65,6 +67,27 @@ function M.inspect()
   markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
   vim.lsp.util.open_floating_preview(markdown_lines, "markdown", M.opts.inspect.window)
 end
+
+function M.execute(opts)
+  if vim.b.jupyter_attached ~= true then
+    vim.notify("No jupyter kernel attached. Select kernel:")
+    M.attach({ args="" })
+    return
+  end
+  ---@diagnostic disable-next-line: param-type-mismatch
+  local codes = vim.fn.getline(opts.line1) -- default to current line
+  if opts.range == 2 then
+    codes = vim.fn.getline(opts.line1, opts.line2)
+    codes = table.concat(codes, "\n")
+  elseif opts.args ~= "" then
+    codes = opts.args
+  end
+  local status = vim.fn.JupyterExecute(codes)
+  if status ~= "ok" then
+    vim.notify(status)
+  end
+end
+
 
 local default_config = {
   inspect = {

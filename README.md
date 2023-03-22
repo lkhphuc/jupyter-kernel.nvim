@@ -16,12 +16,15 @@ Open a floating window to inspect  object under the cursor
 - Result from LSP hover with same object:
 ![Screenshot 2023-02-24 at 15 24 01](https://user-images.githubusercontent.com/12573521/221217272-03676fd6-ed59-4dc3-8e03-4a8e66931fcb.png)
 
-## AutoCompletion with nvim-cmp
+## Auto Completion with nvim-cmp
 ![Screenshot 2023-02-24 at 15 25 55](https://user-images.githubusercontent.com/12573521/221217793-c6f12569-6049-4427-855d-15e850d889f3.png)
 
+## Send code to execute in kernel
+Very basic functionality to send code to directly to kernel in normal and visual mode.
+
 ## Non-features
-This plugin will only implement features that receives information from Jupyter Kernel back to Neovim.
-For controlling or sending code to kernel from Neovim, uses your favorite Neovim plugins or directly through Jupyter Console or Jupyter Notebook.
+No fancy display of execution outputs, as it would complicate the plugin a lot by having async code check if execution is complete or not.
+Use this alongside your terminal/qt console for basic text and image display, or notebook if you need fancy widgets or latex. 
 
 # Setup
 
@@ -45,7 +48,7 @@ For controlling or sending code to kernel from Neovim, uses your favorite Neovim
     -- time to wait for kernel's response in seconds
     timeout = 0.5,
   }
-  cmd = "JupyterAttach",
+  cmd = {"JupyterAttach", "JupyterInspect", "JupyterExecute"},
   build = ":UpdateRemotePlugins",
   keys = { { "<leader>k", "<Cmd>JupyterInspect<CR>", desc = "Inspect object in kernel" } },
 }
@@ -92,6 +95,12 @@ Only the following commands are provided, without any default keymaps.
 - `JupyterAttach`: 1st argument is path to kernel's json. If no path is provided, a popup will appear to select a running kernel to attach.
 - `JupyterDetach`: detach buffer from kernel
 - `JupyterInspect`: inspect object under cursor. This command send the current line and cursor location to `jupyter_client`, it is up to the kernel to decide which object to inspect.
+- `JupyterExecute`: send code to execute in kernel. Support 3 options in order:
+  - Visual mode: Send current selection, lines are properly joined with `\n`
+  - Normal mode with argument: Send entire argument as one line
+  - Normal mode without argument: Send current line
+
+- Buffer variable `vim.b.jupyter_attached` to check if current buffer is attached to any kernel.
 
 ```lua
 vim.keymap.set("n", "<leader>k", "<CMD>JupyterInspect<CR>", {desc = "Inspect object"})

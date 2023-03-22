@@ -13,3 +13,13 @@ vim.api.nvim_create_user_command(
 	require("jupyter_kernel").inspect,
 	{ desc = "Inpsect object in the kernel" }
 )
+
+vim.api.nvim_create_user_command(
+	"JupyterExecute",
+	require("jupyter_kernel").execute,
+	{
+		desc = "Send code to execute with kernel",
+		nargs = "?", -- Accept 0 or 1 argument
+		range = 2,  -- or a visual selection
+	}
+)

@@ -129,3 +129,13 @@ class JupyterKernel:
       return {'status': "_Kernel timeout_"}
     except Exception as exception:
       return {'status': f"_{str(exception)}_"}
+
+  @pynvim.function("JupyterExecute", sync=True)
+  def execute(self, args):
+    assert self.client is not None, "No jupyter kernel attached"
+    code = args[0]
+    try:
+      self.client.execute(code, silent=False)
+      return "ok"
+    except Exception as e:
+      return f"Exception: {str(e)}"
