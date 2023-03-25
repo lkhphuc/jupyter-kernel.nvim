@@ -50,17 +50,16 @@ function M.inspect()
         :gsub("\x1b%[H", "\t")
         -- Groups: name, 0 or more new line, content till end
         -- TODO: Fix for non-python kernel
-        :gsub("^(Call signature):(%s*)(.-)\n$",  "```python\n%3 #(%1)\n```")
-        :gsub("^(Init signature):(%s*)(.-)\n$",  "```python\n%3 #(%1)\n```")
-        :gsub("^(Signature):(%s*)(.-)\n$",       "```python\n%3 #(%1)\n```")
-        :gsub("^(String form):(%s*)(.-)\n$",     "```python\n%3 #(%1)\n```")
-        :gsub("^(Docstring):(%s*)(.-)$",       "\n---\n```rst\n%3\n```")
-        :gsub("^(Class docstring):(%s*)(.-)$", "\n---\n```rst\n%3\n```")
-        :gsub("^(Type):(%s*)(.-)$",            "*%1*: %3")
-        :gsub("^(Length):(%s*)(.-)$",          "*%1*: %3")
-        :gsub("^(File):(%s*)(.-)$",            "*%1*: %3")
-        :gsub("^(Subclasses):(%s*)(.-)$",      "*%1*: %3")
-        -- :gsub("^(.-):(%s*)(.-)\n", "_%1_: %3\n")  -- Surround header with "_" to italicize
+        :gsub("^(Call signature):(%s*)(.-)\n$", "```python\n%3 # %1\n```")
+        :gsub("^(Init signature):(%s*)(.-)\n$", "```python\n%3 # %1\n```")
+        :gsub("^(Signature):(%s*)(.-)\n$",      "```python\n%3 # %1\n```")
+        :gsub("^(String form):(%s*)(.-)\n$",    "```python\n%3 # %1\n```")
+        :gsub("^(Docstring):(%s*)(.-)$",        "\n---\n```rst\n%3\n```")
+        :gsub("^(Class docstring):(%s*)(.-)$",  "\n---\n```rst\n%3\n```")
+        :gsub("^(File):(%s*)(.-)\n$",           "*%1*: `%3`\n")
+        :gsub("^(Type):(%s*)(.-)\n$",           "*%1*: %3\n")
+        :gsub("^(Length):(%s*)(.-)\n$",         "*%1*: %3\n")
+        :gsub("^(Subclasses):(%s*)(.-)\n$",     "*%1*: %3\n")
       if section:match("%S") ~= nil and section:match("%S") ~= "" then
         -- Only add non-empty section
         out = out .. section
