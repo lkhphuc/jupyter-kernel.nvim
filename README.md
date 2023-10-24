@@ -114,7 +114,7 @@ Ipython console runs a single process, without a server-client architecture. Use
 #### Complementary neovim plugins to run code with Jupyter kernel
 - https://github.com/jpalardy/vim-slime
 - https://github.com/hanschen/vim-ipython-cell
-- https://github.com/dccsillag/magma-nvim (or maintained [fork](https://github.com/WhiteBlackGoose/magma-nvim-goose) by @WhiteBlackGoose)
+- https://github.com/dccsillag/magma-nvim (or maintained fork: [molten-nvim](https://github.com/benlubas/molten-nvim))
 - https://github.com/smzm/hydrovim
 - ... and many more repl and terminal plugin
 
